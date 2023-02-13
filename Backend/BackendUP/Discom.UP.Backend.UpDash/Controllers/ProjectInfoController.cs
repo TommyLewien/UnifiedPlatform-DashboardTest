@@ -139,7 +139,9 @@ namespace Discom.UP.Backend.UpDash.Controllers
         public async Task<IActionResult> FactoryModel(CancellationToken cancellationToken)
         {
 
-            using (var versionQueryRequestMessage = new HttpRequestMessage(HttpMethod.Post, "https://localhost:44304/api/" + nameof(TopologyModelQuery)))
+            using (var versionQueryRequestMessage = new HttpRequestMessage(HttpMethod.Post, "http://localhost/Discom.UP.Application.WebApi/api/" + nameof(TopologyModelQuery)))
+
+           // using (var versionQueryRequestMessage = new HttpRequestMessage(HttpMethod.Post, "https://localhost:44304/api/" + nameof(TopologyModelQuery)))
             {
                 try
                 {
