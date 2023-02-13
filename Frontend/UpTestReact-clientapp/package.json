@@ -1,0 +1,70 @@
+{
+  "name": "uptest-react",
+  "version": "5.0.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "latest",
+    "@emotion/styled": "latest",
+    "@mui/material": "next",
+	"@mui/lab": "latest",
+	"@mui/styled-engine-sc": "latest",
+    "@mui/icons-material": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-scripts": "latest",
+    "typescript": "latest",
+	"history": "^5.0.0",
+    "react-router-dom": "next",
+	"discom-up-base": "file:..",
+    "discom-project": "file:.."
+  },
+  "scripts": {
+    "prestart": "node aspnetcore-https && node aspnetcore-react",
+    "start": "rimraf ./build && react-scripts start",
+    "build": "react-scripts build",
+    "build:production": "cross-env PUBLIC_URL=/UpTestReact  cross-env REACT_APP_ENV=production npm run build",
+    "build:kestrel": "cross-env REACT_APP_ENV=kestrel npm run build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+   "devDependencies": {
+    "@types/node": "^12.12.38",
+    "@types/styled-components": "latest",
+    "customize-cra": "latest",
+    "local-package-publisher": "^1.0.4",
+    "react-app-rewired": "latest",
+    "@types/jest": "^25.1.4",
+    "@typescript-eslint/eslint-plugin": "^2.26.0",
+    "@typescript-eslint/parser": "^2.26.0",
+    "microbundle-crl": "^0.13.10",
+    "gh-pages": "^2.2.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.2.1"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ],
+    "rules": {
+      "no-unused-vars": 0,
+      "@typescript-eslint/no-unused-vars": 0,
+      "@typescript-eslint/no-redeclare": "off",
+      "no-redeclare": "off"
+    }
+  }
+}
