@@ -25,6 +25,7 @@ import Link from "@mui/material/Link";
 import { Link as RouterLink } from "react-router-dom";
 
 import { Theme } from "@mui/material/styles";
+import { Grid } from "@mui/material";
 
 const drawerWidth = 240;
 
@@ -111,26 +112,32 @@ export default function MiniDrawer() {
   };
 
   return (
-    <Box sx={{ display: "flex", background: "green" }}>
+    <div>
+      {/* <Box sx={{ display: "flex", background: "green" }}> */}
       {/* <CssBaseline /> */}
       {/* <AppBar position="fixed" theme={theme} open={open}> */}
       <AppBar position="fixed" theme={theme}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{
-              marginRight: "36px",
-              ...(open && { display: "none" }),
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Discom WebDash
-          </Typography>
+        <Toolbar sx={{ display: "flex" }}>
+          <Grid container spacing={1} alignItems={"center"}>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              // onClick={handleDrawerOpen}
+              onClick={handleDrawerChange}
+              edge="start"
+              sx={{
+                marginRight: "36px",
+                ...(open && { display: "none" }),
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+          </Grid>
+          <Grid item xs sx={{ display: { xs: "none", sm: "block" } }}>
+            <Typography variant="h6" noWrap component="div">
+              Discom WebDash
+            </Typography>
+          </Grid>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" theme={theme} open={open} sx={{ width: "0" }}>
@@ -202,6 +209,7 @@ export default function MiniDrawer() {
           https://stackoverflow.com/questions/48508449/content-beneath-fixed-appbar
           */}
       <DrawerHeader />
-    </Box>
+      {/* </Box> */}
+    </div>
   );
 }
