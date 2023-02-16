@@ -9,11 +9,12 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import Preferences from "./Preference";
 
 import Button from "@mui/material/Button";
 
 import { themeLight, themeDark } from "../style/theme";
-import MiniDrawer from "./TsSideMenu";
+import { MiniDrawer } from "./TsSideMenu";
 import Home from "../content/Home";
 import Settings from "../settings/SettingsContainer";
 import SettingsTime from "../settings/SettingsTime";
@@ -35,6 +36,7 @@ import {
 
 import { webAPIUrl, navBaseName } from "./AppSettings";
 import { UpVersionInfo } from "../content/UpVersionInfo";
+import { defaultIsLightTheme, defaultLocale } from "./PreferenceModel";
 
 const localeMap: any = {
   en: enLocale,
@@ -42,12 +44,18 @@ const localeMap: any = {
 };
 
 const application = "UpTestReact";
-const defUserId = "Tommy";
+const defUserId = "Discom";
 const defSessionId = "Std";
 
 export default function App() {
   document.title = "UpTestReact";
-  const [light, setLight] = React.useState(true);
+  // loadIdContext will lookup cookies and suppy defaults to userId and SessionId
+  const idc: IdContext = loadIdContext(application);
+
+  const [isLightTheme, setLight] = React.useState(
+    defaultIsLightTheme(application, defUserId)
+  );
+  // const [light, setLight] = React.useState(true);
   const [locale, setLocale] = React.useState("de");
   return (
     <LoggingContextProvider>
@@ -61,40 +69,25 @@ export default function App() {
           userId={defUserId}
           sessionId={defSessionId}
         >
-          <ThemeProvider theme={light ? themeLight : themeDark}>
+          <ThemeProvider theme={isLightTheme ? themeLight : themeDark}>
             <Router basename={navBaseName}>
               <CssBaseline />
-              <MiniDrawer />
-
-              <Container maxWidth={false} style={{ marginLeft: "50px" }}>
-                {/* The surrounding box brings in a right margin which somehow is necessaay because the Container
-        only works with a marginLeft */}
+              <MiniDrawer
+                preferenceComp={
+                  // <div />
+                  <Preferences
+                    locale={locale}
+                    setLocale={setLocale}
+                    isLightTheme={isLightTheme}
+                    setThemeLight={setLight}
+                  />
+                }
+              >
                 <Box
                   sx={{
                     marginRight: "30px",
                   }}
                 >
-                  <Typography
-                    component="div"
-                    style={{ backgroundColor: "#307ab6", height: "10px" }}
-                  />
-
-                  <Button onClick={() => setLight((prev) => !prev)}>
-                    Toggle Theme
-                  </Button>
-                  <Button
-                    onClick={() =>
-                      setLocale((prev) => (prev === "en" ? "de" : "en"))
-                    }
-                  >
-                    {`<${locale}> Toggle Language`}
-                  </Button>
-                  {/* <Typography
-                component="div"
-                style={{ backgroundColor: "#44751c" }}
-              >
-                {indentString("Unicorns\nRainbows", 4, { indent: "♥" })}
-              </Typography> */}
                   <UpVersionInfo />
                   <Routes>
                     <Route path="" element={<Home />} />
@@ -103,7 +96,8 @@ export default function App() {
                     <Route path="*" element={<Home />} />
                   </Routes>
                 </Box>
-              </Container>
+                {/* </div> */}
+              </MiniDrawer>
             </Router>{" "}
           </ThemeProvider>
         </HomeContextProvider>

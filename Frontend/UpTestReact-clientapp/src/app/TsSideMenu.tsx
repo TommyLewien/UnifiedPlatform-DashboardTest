@@ -10,8 +10,10 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import MenuOpenIcon from "@mui/icons-material/MenuOpen";
+
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
@@ -23,14 +25,15 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { Route, MemoryRouter } from "react-router";
 import Link from "@mui/material/Link";
 import { Link as RouterLink } from "react-router-dom";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Theme } from "@mui/material/styles";
-import { Grid } from "@mui/material";
+import { Grid, SvgIcon } from "@mui/material";
 
-const drawerWidth = 240;
+const expandedDrawerWidth = 220;
 
 const openedMixin = (theme: Theme) => ({
-  width: drawerWidth,
+  width: expandedDrawerWidth,
   transition: theme.transitions.create("width", {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.enteringScreen,
@@ -71,8 +74,8 @@ const AppBar = styled(MuiAppBar, {
     duration: theme.transitions.duration.leavingScreen,
   }),
   ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
+    marginLeft: expandedDrawerWidth,
+    width: `calc(100% - ${expandedDrawerWidth}px)`,
     transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -83,7 +86,7 @@ const AppBar = styled(MuiAppBar, {
 const Drawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }: { theme: Theme; open?: boolean }) => ({
-  width: drawerWidth,
+  width: expandedDrawerWidth,
   flexShrink: 0,
   whiteSpace: "nowrap",
   boxSizing: "border-box",
@@ -95,76 +98,160 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
-export default function MiniDrawer() {
+enum eUserIconsDisplayState {
+  doesNotCare,
+  wantsItOpen,
+  wantsItClosed,
+}
+
+enum eDrawerState {
+  iconMenu,
+  fullMenu,
+  hidden,
+}
+
+interface ParentPreferenceCompProps {
+  preferenceComp?: React.ReactNode;
+  statusComp?: React.ReactNode;
+  children?: React.ReactNode;
+}
+
+export const MiniDrawer: React.FC<ParentPreferenceCompProps> = ({
+  preferenceComp,
+  statusComp,
+  children,
+}) => {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [openFullText, setOpenFullText] = React.useState(false);
+  const [openIcons, setOpenIcons] = React.useState(true);
+  const [userIconDrawerDisplayState, setUserIconDrawerDisplayState] =
+    React.useState(eUserIconsDisplayState.doesNotCare);
+  const displayIconDrawerSizewise = useMediaQuery(theme.breakpoints.up("sm"));
 
   const handleDrawerOpen = () => {
-    setOpen(true);
+    setOpenFullText(true);
   };
 
   const handleDrawerClose = () => {
-    setOpen(false);
+    setOpenFullText(false);
   };
 
-  const handleDrawerChange = () => {
-    open ? setOpen(false) : setOpen(true);
+  const drawerState: eDrawerState =
+    displayIconDrawerSizewise && openFullText
+      ? // large enough to display icon drawer and in openFulltext Mode:
+        eDrawerState.fullMenu
+      : displayIconDrawerSizewise && !openFullText
+      ? // large enough to display icons and not commanded to full text
+        eDrawerState.iconMenu
+      : !displayIconDrawerSizewise &&
+        (userIconDrawerDisplayState === eUserIconsDisplayState.doesNotCare ||
+          userIconDrawerDisplayState === eUserIconsDisplayState.wantsItClosed)
+      ? // too small to display filter and not commanded to different or commanded to be closed:
+        eDrawerState.hidden
+      : !displayIconDrawerSizewise &&
+        userIconDrawerDisplayState === eUserIconsDisplayState.wantsItOpen
+      ? // too small to display filter but commanded to be open. command overides
+        eDrawerState.iconMenu
+      : // else show only content -- should not happen
+        eDrawerState.iconMenu;
+
+  const handleDrawerDisplayChange = () => {
+    if (displayIconDrawerSizewise) {
+      // large enough to open iconDrawer
+      if (drawerState === eDrawerState.fullMenu) {
+        setOpenFullText(false);
+      } else if (drawerState === eDrawerState.iconMenu) {
+        setOpenFullText(true);
+      }
+    } else {
+      // too small for iconDrawer
+      if (drawerState === eDrawerState.iconMenu) {
+        setUserIconDrawerDisplayState(eUserIconsDisplayState.wantsItClosed);
+      } else {
+        setUserIconDrawerDisplayState(eUserIconsDisplayState.wantsItOpen);
+      }
+    }
   };
+
+  // capital D ! to be recognized
+  const DrawerIcon: typeof SvgIcon =
+    drawerState === eDrawerState.iconMenu && displayIconDrawerSizewise
+      ? MenuIcon
+      : drawerState === eDrawerState.iconMenu && !displayIconDrawerSizewise
+      ? ExpandLessIcon
+      : drawerState === eDrawerState.fullMenu
+      ? MenuOpenIcon
+      : drawerState === eDrawerState.hidden
+      ? ExpandMoreIcon
+      : MenuIcon;
 
   return (
     <div>
-      {/* <Box sx={{ display: "flex", background: "green" }}> */}
-      {/* <CssBaseline /> */}
-      {/* <AppBar position="fixed" theme={theme} open={open}> */}
       <AppBar position="fixed" theme={theme}>
         <Toolbar sx={{ display: "flex" }}>
           <Grid container spacing={1} alignItems={"center"}>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              // onClick={handleDrawerOpen}
-              onClick={handleDrawerChange}
-              edge="start"
-              sx={{
-                marginRight: "36px",
-                ...(open && { display: "none" }),
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
-          </Grid>
-          <Grid item xs sx={{ display: { xs: "none", sm: "block" } }}>
-            <Typography variant="h6" noWrap component="div">
-              Discom WebDash
-            </Typography>
+            <Grid item xs={1}>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleDrawerDisplayChange}
+                edge="start"
+              >
+                <DrawerIcon />
+              </IconButton>
+            </Grid>
+            <Grid item xs sx={{ display: { xs: "none", sm: "block" } }}>
+              <Typography
+                variant="h6"
+                color="textSecondary"
+                //sx={{ textDecoration: "none" }}
+                noWrap
+                component={RouterLink}
+                to="Home"
+              >
+                Discom WebDash
+              </Typography>
+            </Grid>
+            <Grid item xs sx={{ display: { xs: "block", sm: "none" } }}>
+              <Typography
+                variant="h6"
+                color="textSecondary"
+                // sx={{ textDecoration: "none" }}
+                noWrap
+                component={RouterLink}
+                to="Home"
+              >
+                WebDash
+              </Typography>
+            </Grid>
+            <Grid item xs>
+              <Grid container justifyContent="right">
+                {preferenceComp}
+              </Grid>
+            </Grid>
           </Grid>
         </Toolbar>
       </AppBar>
-      <Drawer variant="permanent" theme={theme} open={open} sx={{ width: "0" }}>
-        <DrawerHeader>
-          {/* The div  isolates the box below, otherwise it always clings to the
+      <Drawer
+        variant="permanent"
+        theme={theme}
+        open={openFullText}
+        sx={{
+          width: "0",
+          ...(drawerState === eDrawerState.hidden && { display: "none" }),
+        }}
+      >
+        <DrawerHeader />
+        {/* The div  isolates the box below, otherwise it always clings to the
         right side */}
-          <div style={{ width: "100%" }}>
+        {/* <div style={{ width: "100%" }}>
             <Box
               display="flex"
               m={0}
               // sx={{ background: "green" }}
-            >
-              <IconButton onClick={handleDrawerChange}>
-                <ChevronRightIcon
-                  sx={{
-                    ...(open && { display: "none" }),
-                  }}
-                />
-                <ChevronLeftIcon
-                  sx={{
-                    ...(!open && { display: "none" }),
-                  }}
-                />
-              </IconButton>
-            </Box>
+            ></Box>
           </div>
-        </DrawerHeader>
+        </DrawerHeader> */}
         <Divider />
 
         {/* <Link component={RouterLink} to="/">
@@ -205,11 +292,27 @@ export default function MiniDrawer() {
           ))}
         </List>
       </Drawer>
-      {/*  SHift down the content with an empty DrawerHeader:
+      {/* Use a auto box to extend the children 
+       for xs, no margins around the browser window
+       for sm, margin 1 to right and depending on drawer state 0 or 8 to the left */}
+      <Box
+        sx={{
+          width: "auto",
+          marginInlineEnd: { xs: 0, sm: 1 },
+        }}
+      >
+        {/*  Shift down the content with an empty DrawerHeader:
           https://stackoverflow.com/questions/48508449/content-beneath-fixed-appbar
           */}
-      <DrawerHeader />
-      {/* </Box> */}
+        <DrawerHeader />
+        <Box
+          marginLeft={drawerState === eDrawerState.hidden ? 0 : 10}
+          marginTop={0}
+          // sx={{ background: "green" }}
+        >
+          {children}
+        </Box>
+      </Box>
     </div>
   );
-}
+};
