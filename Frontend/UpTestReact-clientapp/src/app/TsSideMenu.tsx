@@ -50,7 +50,7 @@ const closedMixin = (theme: Theme) => ({
   overflowX: "hidden",
   width: `calc(${theme.spacing(7)} + 1px)`,
   [theme.breakpoints.up("sm")]: {
-    width: `calc(${theme.spacing(9)} + 1px)`,
+    width: `calc(${theme.spacing(7)} + 1px)`,
   },
 });
 const DrawerHeader = styled("div")(({ theme }) => ({
