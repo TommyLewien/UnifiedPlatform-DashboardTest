@@ -145,8 +145,8 @@ namespace Discom.UP.Backend.UpDash.Controllers
             {
                 try
                 {
-                    //versionQueryRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-protobuf"));
-                    versionQueryRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    versionQueryRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-protobuf"));
+                   // versionQueryRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     TopologyModelQuery request = new TopologyModelQuery();
 
                     versionQueryRequestMessage.Content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
@@ -154,11 +154,12 @@ namespace Discom.UP.Backend.UpDash.Controllers
                     var response = await _httpClient.SendAsync(versionQueryRequestMessage, cancellationToken);
                     if (response.IsSuccessStatusCode)
                     {
-                        // TopologyModel tp = TopologyModel.Parser.ParseFrom(await response.Content.ReadAsStreamAsync());
-                        TopologyModel tp = TopologyModel.Parser.ParseJson(await response.Content.ReadAsStringAsync());
-                        // string ms = await response.Content.ReadAsStringAsync();
-                        //var tp = JsonSerializer.Deserialize<TopologyModel>(ms);
-                        // var tp = NJS.JsonConvert.DeserializeObject<TopologyModel>(ms);
+                        TopologyModel tp = TopologyModel.Parser.ParseFrom(await response.Content.ReadAsStreamAsync());
+                        //string tps = await response.Content.ReadAsStringAsync();
+                        //TopologyModel tp = TopologyModel.Parser.ParseJson(tps);
+                        //// string ms = await response.Content.ReadAsStringAsync();
+                        ////var tp = JsonSerializer.Deserialize<TopologyModel>(ms);
+                        //// var tp = NJS.JsonConvert.DeserializeObject<TopologyModel>(ms);
                         
 
                         return Ok(tp);

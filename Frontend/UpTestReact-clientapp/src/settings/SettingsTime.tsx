@@ -7,7 +7,7 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import TextField from "@mui/material/TextField";
 
-//import TimePicker from "@mui/x-date-pickers/TimePicker";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 
 export default function SettingsTime() {
   const [value, setValue] = React.useState(new Date());
@@ -30,11 +30,11 @@ export default function SettingsTime() {
         Time
       </Typography>
 
-      {/* <TimePicker
+      <TimePicker
         value={value}
-        // onChange={(newValue) => setValue(newValue ? newValue : new Date())}
-        // renderInput={(params) => <TextField {...params} />}
-      /> */}
+        onChange={(newValue) => setValue(newValue ? newValue : new Date())}
+        renderInput={(params) => <TextField {...params} />}
+      />
     </Box>
   );
 }

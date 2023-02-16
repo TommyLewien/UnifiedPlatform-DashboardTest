@@ -7,8 +7,8 @@ import Link from "@mui/material/Link";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
-import AdapterDateFns from "@mui/x-date-pickers/AdapterDateFns";
-import LocalizationProvider from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 import Button from "@mui/material/Button";
 
